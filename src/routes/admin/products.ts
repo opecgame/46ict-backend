@@ -149,6 +149,35 @@ router.patch("/:id", userAdminMiddleware(), ...PostProductDto, handleValidationR
 
 
 
+router.delete("/:id", userAdminMiddleware(), handleValidationResult, async (req, res) => {
+
+    const product = await req.app.prisma.products.findUnique({
+        where: {
+            id: Number(req.params.id),
+        },
+    });
+
+    if (!product) {
+        return doResponse(res.status(404), {
+            success: false,
+            message: "ไม่พบข้อมูลสินค้า",
+        });
+    }
+
+    const updateProduct = await req.app.prisma.products.delete({
+        where: {
+            id: Number(req.params.id),
+        }
+    });
+
+    doResponse(res, {
+        success: true,
+        message: "ลบสินค้าเรียบร้อย",
+        // data: updateProduct,
+    });
+});
+
+
 
 export default router;
 
